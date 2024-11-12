@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
+#include <cstdlib> 
+#include <ctime>   
+#include <fstream> 
 
 using namespace std;
 
@@ -26,49 +26,91 @@ public:
         cout << "Nombre total de créatures : " << cpt << endl;
         cout << "====================\n" << endl;
     }
+
+    int attack() {
+        int alea = rand() % 10 + 1;
+        int degats = (this->pa * this->niveau * alea) / 10;
+        cout << "La créature attaque et inflige " << degats << " dégâts !" << endl;
+        return degats;
+    }
+
+    void subitdegat(int degats) {
+        this->pv -= degats;
+        cout << "La créature subit " << degats << " dégâts !" << endl;
+    }
+
+    bool estvivant() {
+        return this->pv > 0;
+    }
 };
 
 int Creature::cpt = 0; // Initialize static variable
 
-void foo() {
-    Creature temp(20, 10, 1); // Temporary creature
-    cout << "Inside foo(), Nombre de créatures : " << Creature::getCount() << endl;
-} // temp is destroyed here
+class Hero {
+private:
+    string nom;
+    int pv;
+    int pa;
+    int niveau;
+    int arme;
+    int potions;
 
-void test1() {
-    cout << "Test 1: \n";
+public:
+    Hero() : nom("jijli"), pv(100), pa(20), niveau(1), arme(0), potions(3) {}
+    Hero(string nom, int pv, int pa, int niveau) : nom(nom), pv(pv), pa(pa), niveau(niveau), arme(0), potions(3) {}
+    ~Hero() {}
 
-    Creature c1; // Default creature
-    Creature c2(10, 2, 2); // Custom creature
+    void affiche() {
+        cout << "\n====== HERO ======" << endl;
+        cout << "Nom    : " << nom << "\nPV     : " << pv << "\nPA     : " << pa 
+             << "\nNiveau : " << niveau << "\nArme   : +" << arme 
+             << "\nPotions: " << potions << endl;
+        cout << "==================\n" << endl;
+    }
 
-    cout << "Nombre de créatures: " << Creature::getCount() << endl;
+    int attack() {
+        int alea = rand() % 10 + 1;
+        int degats = ((this->pa + this->arme) * this->niveau * alea) / 10;
+        cout << nom << " attaque et inflige " << degats << " dégâts !" << endl;
+        return degats;
+    }
 
-    foo(); // Call foo to create and destroy a creature
+    void subitdegat(int degats) {
+        this->pv -= degats;
+        cout << nom << " subit " << degats << " dégâts !" << endl;
+    }
 
-    cout << "Nombre de créatures après appel de foo : " << Creature::getCount() << endl;
-}
+    bool estvivant() {
+        return this->pv > 0;
+    }
 
-void bar(Creature c1) {
-    Creature c2; // Another creature inside bar
-    cout << "Inside bar(), Nombre de créatures: " << Creature::getCount() << endl;
-} // c2 is destroyed here
+    void utiliserPotion() {
+        if (potions > 0) {
+            pv += 20; 
+            potions--;
+            cout << nom << " utilise une potion et récupère 20 PV. PV actuels : " << pv << endl;
+        } else {
+            cout << "Vous n'avez plus de potions !" << endl;
+        }
+    }
 
-void test2() {
-    cout << "Test 2: \n";
+    void equiperArme(int puissance) {
+        arme = puissance;
+        cout << nom << " équipe une arme avec +" << arme << " points d'attaque !" << endl;
+    }
 
-    Creature c1; // Default creature
-    Creature c2(10, 2, 2); // Custom creature
-
-    cout << "Nombre de créatures: " << Creature::getCount() << endl;
-
-    bar(c2); // Pass c2 by value to bar
-
-    cout << "Nombre de créatures après appel de bar : " << Creature::getCount() << endl;
-}
+    void sauvegarder(const string& nomFichier) {
+        ofstream fichier(nomFichier);
+        if (fichier) {
+            fichier << nom << " " << pv << " " << pa << " " << niveau << " " << arme << " " << potions << endl;
+            cout << "\nPartie sauvegardée dans " << nomFichier << " !" << endl;
+        } else {
+            cout << "Erreur de sauvegarde !" << endl;
+        }
+    }
+};
 
 int main() {
-    // Uncomment to test the main gameplay
-    /*
     srand(static_cast<unsigned int>(time(0)));
 
     Hero hero("demy", 100, 10, 5);
@@ -129,11 +171,6 @@ int main() {
             break;
         }
     }
-    */
-
-    // Run the tests
-    test1();
-    test2();
 
     return 0;
 }
